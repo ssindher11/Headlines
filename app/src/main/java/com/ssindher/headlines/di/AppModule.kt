@@ -4,18 +4,16 @@ import androidx.room.Room
 import com.ssindher.headlines.data.database.NewsDatabase
 import com.ssindher.headlines.data.network.ApiInterface
 import com.ssindher.headlines.data.repository.NewsRepository
-import com.ssindher.headlines.ui.details.NewsDetailsViewModel
 import com.ssindher.headlines.ui.home.HomeViewModel
 import com.ssindher.headlines.util.ConnectionLiveData
 import com.ssindher.headlines.util.Constants
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class AppModule {
@@ -31,7 +29,6 @@ class AppModule {
         single { ConnectionLiveData(androidContext()) }
         single { NewsRepository(get(), get()) }
         viewModel { HomeViewModel(get()) }
-        viewModel { NewsDetailsViewModel(get()) }
     }
 
     val netModule = module {
@@ -39,20 +36,14 @@ class AppModule {
             val interceptor = HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             }
-            val networkInterceptor = Interceptor { chain ->
-                val requestBuilder: Request.Builder = chain.request().newBuilder()
-                requestBuilder.header("X-Api-Key", Constants.NEWS_API_KEY)
-                chain.proceed(requestBuilder.build())
-            }
-            OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .addNetworkInterceptor(networkInterceptor)
+            OkHttpClient.Builder().addInterceptor(interceptor).build()
         }
         factory {
             Retrofit.Builder()
                 .client(get())
                 .baseUrl(Constants.NEWS_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build()
         }
         single { get<Retrofit>().create(ApiInterface::class.java) }
