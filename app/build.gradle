@@ -5,6 +5,10 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file("local.properties").newDataInputStream())
+def newsApiKey = properties.getProperty("NEWS_API_KEY", "")
+
 android {
     compileSdk 32
 
@@ -22,7 +26,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "NEWS_API_KEY", newsApiKey
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
+            buildConfigField "String", "NEWS_API_KEY", newsApiKey
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
