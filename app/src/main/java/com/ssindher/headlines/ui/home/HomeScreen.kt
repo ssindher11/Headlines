@@ -1,11 +1,25 @@
 package com.ssindher.headlines.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarData
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -30,16 +44,19 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.placeholder.placeholder
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ssindher.headlines.R
 import com.ssindher.headlines.data.model.NewsArticle
-import com.ssindher.headlines.ui.theme.*
+import com.ssindher.headlines.ui.theme.Black
+import com.ssindher.headlines.ui.theme.GreyBackground
+import com.ssindher.headlines.ui.theme.TextCaption
+import com.ssindher.headlines.ui.theme.TextHeading
+import com.ssindher.headlines.ui.theme.White
+import com.ssindher.headlines.ui.theme.robotoSlab
 import com.ssindher.headlines.util.getFormattedDate
 import com.ssindher.headlines.util.getValidImageUrl
-import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     isNetworkAvailable: Boolean = false,
@@ -63,7 +80,8 @@ fun HomeScreen(
         snackbarHost = { scaffoldState.snackbarHostState },
         modifier = Modifier.fillMaxSize()
     ) {
-        if (newsArticles.isEmpty() && !isNetworkAvailable) {
+        EmptyState()
+        /*if (newsArticles.isEmpty() && !isNetworkAvailable) {
             EmptyState()
         }
         if (newsError.isNotBlank()) {
@@ -89,7 +107,7 @@ fun HomeScreen(
                     )
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -262,7 +280,7 @@ fun AppBar() {
 fun EmptyState() {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val lottieAnimation = createRef()
-        val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.no_internet))
+        val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.trophy))
         LottieAnimation(
             composition = composition,
             iterations = LottieConstants.IterateForever,
